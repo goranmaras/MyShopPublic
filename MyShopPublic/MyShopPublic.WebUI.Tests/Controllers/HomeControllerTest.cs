@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MyShopPublic.Core.Contracts;
+using MyShopPublic.Core.Models;
+using MyShopPublic.Core.ViewModels;
 using MyShopPublic.WebUI;
 using MyShopPublic.WebUI.Controllers;
 
@@ -12,43 +15,25 @@ namespace MyShopPublic.WebUI.Tests.Controllers
     [TestClass]
     public class HomeControllerTest
     {
-        [TestMethod]
-        public void Index()
-        {
-            //// Arrange
-            //HomeController controller = new HomeController();
+        
+            [TestMethod]
+            public void IndexPageDoesReturnProducts()
+            {
+            IRepository<Product> productContext = new Mocks.MockContext<Product>();
+            IRepository<ProductCategory> productCategoryContext = new Mocks.MockContext<ProductCategory>();
 
-            //// Act
-            //ViewResult result = controller.Index() as ViewResult;
+            productContext.Insert(new Product());
 
-            //// Assert
-            //Assert.IsNotNull(result);
-        }
+            HomeController controller = new HomeController(productContext,productCategoryContext);
 
-        [TestMethod]
-        public void About()
-        {
-            //// Arrange
-            //HomeController controller = new HomeController();
+            var result = controller.Index() as ViewResult;
 
-            //// Act
-            //ViewResult result = controller.About() as ViewResult;
+            var viewModel = (ProductListViewModel)result.ViewData.Model;
 
-            //// Assert
-            //Assert.AreEqual("Your application description page.", result.ViewBag.Message);
-        }
+            Assert.AreEqual(1, viewModel.Product.Count());
+            }
+        
 
-        [TestMethod]
-        public void Contact()
-        {
-        //    // Arrange
-        //    HomeController controller = new HomeController();
 
-        //    // Act
-        //    ViewResult result = controller.Contact() as ViewResult;
-
-        //    // Assert
-        //    Assert.IsNotNull(result);
-        }
     }
 }
